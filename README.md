@@ -1,17 +1,18 @@
-## lb_02. Проектирование и реализация клиент-серверной системы. HTTP, веб-серверы и RESTful веб-сервисы.
+# lb_02. Проектирование и реализация клиент-серверной системы. HTTP, веб-серверы и RESTful веб-сервисы.
 
-## Цели работы:
+# Цели работы:
 - изучить методы отправки и анализа HTTP-запросов с использованием инструментов telnet и curl
 - освоить базовую настройку и анализ работы HTTP-сервера nginx в качестве веб-сервера и обратного прокси
 - изучить и применить на практике концепции архитектурного стиля REST для создания веб-сервисов (API) на языке Python
 
 
-# 8 вариант. Проверка доступности сайта lenta.ru через telnet на порту 80.
+## 8 вариант. Проверка доступности сайта lenta.ru через telnet на порту 80.
 Предметная область
 
 <img width="1256" height="336" alt="GHJ" src="https://github.com/user-attachments/assets/7d221699-84c4-472b-a2f8-4672a19fb910" />
 
-# Подготовка рабочего пространства в VS Code.
+## Подготовка рабочего пространства в VS Code
+
 Для создания каталога проекта мы будем использовать встроенный терминал. Для этого откроем его, выбрав в верхнем меню Terminal -> New Terminal. В открывшемся терминале выполним следующие команды для создания и
 перехода в директорию проекта:
 ```
@@ -22,7 +23,7 @@ cd lenta_api
 <img width="610" height="80" alt="1 фото" src="https://github.com/user-attachments/assets/726be59e-2b1f-429a-9a7d-d99d947e8c4f" />
 
 
-# Архитектура решения.
+## Архитектура решения
 (дополнить пояснением)
 
 <img width="170" height="160" alt="2 фото" src="https://github.com/user-attachments/assets/9e7e5f2b-c606-4474-a30f-e1026db2d45f" />
@@ -31,8 +32,8 @@ cd lenta_api
 <img width="1422" height="303" alt="архитектура решениия" src="https://github.com/user-attachments/assets/72b69470-57a9-428f-ad4a-c1ac65a1453c" />
 
 
-## HTTP-анализ API новостей по России и всему миру(?)
-# Задача 1. Проверить доступность сайта lenta.ru через telnet на порту 80.
+# HTTP-анализ API новостей по России и всему миру(?)
+## Задача 1. Проверить доступность сайта lenta.ru через telnet на порту 80.
 Новостной сайт предоставляет API, которое отдает новостные ленты в формате RSS. Мы будем используем утилиту telnet для отправки запроса и анализа ответа.
 
 1.1. Установка утилит. Поскольку telnet еще не установлен, выполним в терминале:
@@ -108,83 +109,288 @@ Accept-Charset: utf-8
 <img width="605" height="463" alt="9 фото" src="https://github.com/user-attachments/assets/0a1b004e-fd99-472f-a572-46afcc59790e" />
 
 
-## Разработка REST API "Календарь событий".
-# Задача 2. 
-Обновим пакеты и установим Python:
+# Разработка REST API "Календарь событий"
+## Задача 2. Создать API на Python и Flask для управления календарем событий мониторинга.
+Данный API-сервис представляет собой ядро системы для мониторинга и отслеживания доступности веб-ресурсов. Он позволяет программно регистрировать все события проверки доступности сайтов и получать полную историю этих проверок для дальнейшего анализа, построения отчетов или отображения в системе мониторинга.
+Сервис оперирует одной ключевой сущностью — "Событие мониторинга".
 
-```python
-sudo apt update
-sudo apt install python3 python3-pip python3-venv -y
+## Архитектура решения
+
+Архитектура инструментов REST API
+
+<img width="1138" height="301" alt="FGH" src="https://github.com/user-attachments/assets/37124379-469f-4f08-bfab-7cb0aec428ee" />
+
+## Структура данных "Событие мониторинга"
+
+Каждое событие мониторинга в системе описывается следующими полями:
+- id (число). Уникальный идентификатор события. Присваивается автоматически.
+- event_name (строка). Название события мониторинга.
+- date (строка). Дата и время события в формате ISO.
+
+## Пример объекта "Событие мониторинга"
+
 ```
-Затем создадим и активируем виртуальное окружение:
+<>JSON
+{
+  "id": 1,
+  "event_name": "Проверка доступности lenta.ru через telnet на порту 80",
+  "date": "2025-11-02T17:10:56.123456"
+}
+```
 
-```python
-mkdir grpc_fin_lab
-cd grpc_fin_lab
+## Доступные операции (API Endpoints)
+
+Сервис предоставляет две основные функции:
+
+A. Получение списка всех событий мониторинга
+
+-Endpoint. GET /api/events
+-Что делает. Возвращает полный список всех когда-либо зарегистрированных в системе событий мониторинга.
+-Бизнес-сценарий. Используется для построения отчетов "История проверок", анализа доступности сайтов, отображения ленты событий в системе мониторинга.
+
+Б. Добавление нового события мониторинга
+
+-Endpoint. POST /api/events
+-Что делает. Позволяет записать в систему новое событие мониторинга. Для этого необходимо передать данные о названии события и дате.
+-Бизнес-сценарий. Основная функция для системы мониторинга. Вызывается каждый раз, когда выполняется проверка доступности сайта lenta.ru через telnet на порту 80.
+
+## Расширение API для аналитики
+
+Проблема. Текущая версия API позволяет получить только "сырые" данные — весь список событий мониторинга. Для анализа доступности сайтов этого недостаточно. Чтобы понять общую картину работы системы, нужно постоянно рассчитывать итоговые показатели (доступность, время ответа, статистику ошибок). Делать это на стороне клиента — неэффективно.
+
+Решение. Добавить в API специальный аналитический эндпоинт, который будет предоставлять уже агрегированные, готовые к использованию данные.
+
+Задача. Реализовать эндпоинт GET /api/summary
+Этот эндпоинт должен рассчитывать и возвращать сводную информацию по мониторингу.
+
+## Создание и активация виртуального окружения
+
+Установим пакет для создания виртуальных окружений, поскольку его нет:
+
+```
+sudo apt install python3-venv -y
+```
+Создадим окружение в папке 'venv’
+
+```
 python3 -m venv venv
+```
+Активируем окружение
+
+```
 source venv/bin/activate
 ```
 
-Теперь в начале строки терминала увидим (venv).
-Установим библиотеки gRPC:
+<img width="793" height="226" alt="10 фото" src="https://github.com/user-attachments/assets/b322fe62-851e-4eda-9cca-a8d36c279009" />
 
-```python
-pip install grpcio grpcio-tools
+## Установка Flask. С активным виртуальным окружением установим Flask:
+
+```
+pip install Flask
+```
+
+<img width="599" height="101" alt="11 фото" src="https://github.com/user-attachments/assets/851e2273-04ac-48ef-8145-cbc77d078980" />
+
+
+## Написание кода API. 
+
+В VS Code создадим новый файл app.py в папке lenta_api и вставим в него следующий код:
+
+```
+from flask import Flask, request, jsonify
+from datetime import datetime
+import uuid
+
+app = Flask(name)
+
+# Временное хранилище событий
+events = [
+    {
+        "id": "1",
+        "event_name": "Проверка доступности lenta.ru через telnet на порту 80",
+        "date": "2025-11-02T19:10:00.000000"
+    },
+    {
+        "id": "2",
+        "event_name": "Успешное подключение к lenta.ru:80",
+        "date": "2025-11-02T19:15:00.000000"
+    },
+    {
+        "id": "3", 
+        "event_name": "Анализ HTTP ответа от сервера nginx",
+        "date": "2025-11-02T19:20:00.000000"
+    }
+]
+
+
+@app.route('/api/events', methods=['GET'])
+def get_events():
+    """
+    Получить список всех событий мониторинга
+    """
+    return jsonify(events)
+
+@app.route('/api/events', methods=['POST'])
+def add_event():
+    """
+    Добавить новое событие мониторинга
+    """
+    data = request.get_json()
+    
+    # Валидация входных данных
+    if not data or 'event_name' not in data:
+        return jsonify({"error": "Отсутствует обязательное поле 'event_name'"}), 400
+    
+    # Создание нового события
+    new_event = {
+        "id": str(uuid.uuid4()),
+        "event_name": data['event_name'],
+        "date": data.get('date', datetime.now().isoformat())
+    }
+    
+    events.append(new_event)
+    
+    return jsonify(new_event), 201
+
+@app.route('/api/events/<event_id>', methods=['GET'])
+def get_event(event_id):
+    """
+    Получить событие по ID
+    """
+    event = next((e for e in events if e['id'] == event_id), None)
+    
+    if event is None:
+        return jsonify({"error": "Событие не найдено"}), 404
+    
+    return jsonify(event)
+
+@app.route('/api/summary', methods=['GET'])
+def get_summary():
+    """
+    Получить сводную статистику по событиям мониторинга
+    """
+    if not events:
+        return jsonify({
+            "total_events": 0,
+            "message": "Нет данных для анализа"
+        })
+    
+    total_events = len(events)
+    
+    # Подсчет событий по типам (можно адаптировать под вашу логику)
+    site_checks = [e for e in events if 'lenta.ru' in e['event_name'] or 'доступность' in e['event_name']]
+    telnet_checks = [e for e in events if 'telnet' in e['event_name'].lower()]
+    
+    # Сортировка событий по дате
+    sorted_events = sorted(events, key=lambda x: x['date'], reverse=True)
+    
+    summary = {
+        "total_events": total_events,
+        "site_checks_count": len(site_checks),
+        "telnet_checks_count": len(telnet_checks),
+        "last_check_time": sorted_events[0]['date'] if sorted_events else None,
+        "recent_events": sorted_events[:5]  # Последние 5 событий
+    }
+    
+    return jsonify(summary)
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """
+    Проверка здоровья API
+    """
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "events_count": len(events)
+    })
+
+if name == 'main':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+```
+
+## Запуск Flask-приложения
+
+Нам необходимо в терминале с активным (venv) запустить сервер:
+```
+python3 app.py
+```
+
+<img width="976" height="139" alt="12 фото" src="https://github.com/user-attachments/assets/5d00bbb9-2b67-40f4-9806-f52807a4b87e" />
+
+Затем откроем новый терминал и установим jq:
+
+```
+sudo apt install jq -y
+```
+
+<img width="827" height="179" alt="13 фото" src="https://github.com/user-attachments/assets/ac3d3fa1-d5a0-4daf-96e0-c8271bc04126" />
+
+## Получение списка транзакций
+
+```
+curl -s http://127.0.0.1:5000/api/transactions | jq
 ```
 
 
-<img width="515" height="301" alt="1" src="https://github.com/user-attachments/assets/5670da31-09c6-47ed-909f-e273f5f099e5" />
+<img width="1206" height="347" alt="конечный вариант" src="https://github.com/user-attachments/assets/bf111f5e-5948-4642-a51b-aaa7ab49f69d" />
+
+## Получение сводки
+
+```
+curl -s http://127.0.0.1:5000/api/summary | jq
+```
+
+<img width="1319" height="356" alt="16 фото" src="https://github.com/user-attachments/assets/e46c5430-6e96-4dc0-b311-d3ae6a030583" />
 
 
-## Шаг 2: определение сервиса в .proto файле
-Создаём и заполняем .proto файл:
+## Проверка создания (?)
 
-```python
-syntax = "proto3";
+Для этого тправим POST-запрос, чтобы добавить новую запись:
 
-message TickerRequest {
-    string ticker_symbol = 1;
-}
+```
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"event_name": "Проверка доступности lenta.ru через telnet на порту 80"}' \
+  http://127.0.0.1:5000/api/events | jq
+```
 
-message StockUpdate {
-    string ticker_symbol = 1;
-    double current_price = 2;
-    double price_change = 3;
-    double change_percent = 4;
-    int64 timestamp = 5;
-    int32 volume = 6;
-}
+<img width="1339" height="232" alt="17 фото" src="https://github.com/user-attachments/assets/f35070b6-ff97-41e9-8802-6a60e00c81b7" />
 
-service StockTicker {
-    rpc SubscribeToStockUpdates(stream TickerRequest) returns (stream StockUpdate);
-}
+## Проведение финальной проверки
+
+```
+curl http://127.0.0.1:5000/api/transactions
+```
+
+<img width="1334" height="405" alt="18 фото" src="https://github.com/user-attachments/assets/29b5c782-0f84-44ed-b9ae-3374ae188f4c" />
+
+## Задача 3. Настроить ограничение (rate limit) в 10 запросов в минуту с одного IP.
+# Архитектура инструментов REST API с Nginx
+
+
+<img width="1454" height="308" alt="DFGH" src="https://github.com/user-attachments/assets/6db39f68-73e8-4ae7-bf3b-14cb4111e855" />
+
+
+# Установка "Администратора" (Nginx)
+Устанавливаем пакет nginx
+```
+sudo apt install nginx -y
+```
+
+<img width="655" height="195" alt="19 ф" src="https://github.com/user-attachments/assets/0c905355-0ae9-4b79-9f76-e0c80cd405be" />
+
+Запускаем сервис немедленно
+```
+sudo systemctl start nginx
+```
+Включаем автозапуск при старте системы
+```
+sudo systemctl enable nginx
 ```
 
 
-## Шаг 3: генерация кода
-Выполним в терминале команду для генерации Python-классов из .proto файла:
-
-```python
-python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. fin.proto
-```
-
--I. указывает, где искать импорты (в текущей директории).
---python_out=. генерирует код для сообщений (fin_pb2.py).
---grpc_python_out=. генерирует код для сервиса (fin_pb2_grpc.py).
-
-В папке появятся два новых файла: fin_pb2.py и fin_pb2_grpc.py
 
 
-<img width="180" height="159" alt="2" src="https://github.com/user-attachments/assets/1db7c000-5b17-4f2d-b4b7-c64b58026268" />
-
-## Шаг 4: реализация сервера
-Создадим файл server.py и напишим код сервера:
-
-```python
-import grpc
-from concurrent import futures
-import time
-import random
 import fin_pb2
 import fin_pb2_grpc
 
