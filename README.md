@@ -383,18 +383,48 @@ sudo apt install nginx -y
 ```
 sudo systemctl start nginx
 ```
+
 Включаем автозапуск при старте системы
 ```
 sudo systemctl enable nginx
 ```
 
+# Создание ограничения (?)
+
+Теперь зададим ограничение в 10 запросов/мин на один IP для Nginx. Откроем файл:
+
+```
+sudo nano /etc/nginx/nginx.conf
+```
+И внутри этого файла, в большом блоке http { ... }, добавим одну строку. Она определяет ограничение ввода запросов с одного IP:
+
+```
+limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/m;
+```
+
+
+<img width="662" height="339" alt="24" src="https://github.com/user-attachments/assets/99a2fceb-e25d-4597-97a1-c6d509712902" />
+
+
+# Настройка "Инструкций" для API (?)
 
 
 
-import fin_pb2
-import fin_pb2_grpc
 
-# Создаем класс-обработчик, который реализует наш gRPC сервис
+# Применение новых правил
+Настройки изменены, но Nginx все еще работает по-старому. Нужно заставить его перечитать файлы конфигурации.
+
+Проверим, нет ли в наших файлах синтаксических ошибок
+
+```
+sudo nginx -t
+```
+
+
+# Ожидаемый ответ: ... syntax is ok ... test is successful
+# 2. Если все хорошо, плавно перезапускаем Nginx, чтобы он
+применил изменения
+sudo systemctl restart nginx
 class StockTickerServicer(fin_pb2_grpc.StockTickerServicer):
     def SubscribeToStockUpdates(self, request_iterator, context):
         """Bidirectional streaming RPC"""
