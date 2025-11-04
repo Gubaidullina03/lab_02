@@ -114,6 +114,10 @@ Accept: text/html
 
 <img width="589" height="488" alt="8 фото" src="https://github.com/user-attachments/assets/3bf605d3-44f8-45ef-9701-ce9ef1b5c8d1" />
 
+
+Здесь мы с помощью имитации браузера User-Agent: Mozilla/5.0 обходим базовую защиту и предотвращаем появление ошибки 403 Forbidden, которая отвечает за права доступа
+
+
 Запрос с проверкой кодировки 
 
 ```
