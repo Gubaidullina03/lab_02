@@ -371,7 +371,7 @@ curl -s http://127.0.0.1:5000/api/summary | jq
 <img width="1319" height="356" alt="16 фото" src="https://github.com/user-attachments/assets/e46c5430-6e96-4dc0-b311-d3ae6a030583" />
 
 
-## Проверка создания (?)
+## Проверка создания события мониторинга
 
 Для этого отправим POST-запрос, чтобы добавить новую запись:
 
