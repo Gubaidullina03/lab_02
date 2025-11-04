@@ -434,10 +434,55 @@ limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/m;
 <img width="662" height="339" alt="24" src="https://github.com/user-attachments/assets/99a2fceb-e25d-4597-97a1-c6d509712902" />
 
 
-## Настройка "Инструкций" для API (?)
+## Настройка "Инструкций" для API
+Теперь самое главное объяснить Nginx, как обрабатывать запросы, которые приходят на адрес, начинающийся с /api/.
 
+```
+sudo nano /etc/nginx/sites-available/lenta_api
+```
 
+В этом файле напишем нашу инструкцию:
 
+```
+server {
+    listen 80;
+    server_name localhost;
+
+    # === ИНСТРУКЦИЯ ДЛЯ API МОНИТОРИНГА ===
+    location /api/ {
+        # 1. ПРАВИЛО ОЧЕРЕДИ: 10 ЗАПРОСОВ В МИНУТУ
+        limit_req zone=api_limit burst=5 nodelay;
+        # Это как "контроль доступа в клуб":
+        # - zone=api_limit - используем наш журнал учета
+        # - burst=5 - разрешаем небольшую очередь из 5 человек
+        # - nodelay - первых в очереди пропускаем сразу
+        
+        # 2. ПРАВИЛО ПЕРЕНАПРАВЛЕНИЯ НА FLASK
+        proxy_pass http://127.0.0.1:5000;
+        # Это как "перевод звонка на нужного специалиста"
+        
+        # 3. ПЕРЕДАЕМ ИНФОРМАЦИЮ О КЛИЕНТЕ
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Это как "передаем визитку клиента" на кухню
+        
+        # 4. ТАЙМАУТЫ ДЛЯ СТАБИЛЬНОСТИ
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        # Это как "не ждем вечно ответа от кухни"
+    }
+
+    # === ОСНОВНОЙ САЙТ ===
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}
+```
+(вставить фото)
+После этого сохраняем файл.
 
 ## Применение новых правил
 Настройки изменены, но Nginx все еще работает по-старому. Нужно заставить его перечитать файлы конфигурации.
