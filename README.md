@@ -353,7 +353,7 @@ sudo apt install jq -y
 
 <img width="827" height="179" alt="13 фото" src="https://github.com/user-attachments/assets/ac3d3fa1-d5a0-4daf-96e0-c8271bc04126" />
 
-## Получение списка чего(?)
+## Получение списка событий
 
 ```
 curl -s http://127.0.0.1:5000/api/events | jq
