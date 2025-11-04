@@ -368,7 +368,8 @@ curl http://127.0.0.1:5000/api/events
 <img width="1334" height="405" alt="18 фото" src="https://github.com/user-attachments/assets/29b5c782-0f84-44ed-b9ae-3374ae188f4c" />
 
 ## Задача 3. Настроить ограничение (rate limit) в 10 запросов в минуту с одного IP.
-## Архитектура инструментов REST API с Nginx
+## Архитектура решения
+Архитектура инструментов REST API с Nginx
 
 
 <img width="1454" height="308" alt="DFGH" src="https://github.com/user-attachments/assets/6db39f68-73e8-4ae7-bf3b-14cb4111e855" />
