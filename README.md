@@ -386,7 +386,7 @@ curl -X POST -H "Content-Type: application/json" \
 ## Проведение финальной проверки
 
 ```
-curl http://127.0.0.1:5000/api/events
+curl http://127.0.0.1:5000/api/events | jq
 ```
 
 <img width="1334" height="405" alt="18 фото" src="https://github.com/user-attachments/assets/29b5c782-0f84-44ed-b9ae-3374ae188f4c" />
