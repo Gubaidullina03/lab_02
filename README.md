@@ -481,7 +481,11 @@ server {
     }
 }
 ```
-(вставить фото)
+
+
+<img width="679" height="380" alt="инструкция" src="https://github.com/user-attachments/assets/0bccd21b-708c-4e9b-9690-2f8a91a9cc72" />
+
+
 После этого сохраняем файл.
 
 ## Применение новых правил
@@ -524,8 +528,23 @@ curl http://localhost
 Теперь проверим, что запросы к /api/events правильно перенаправляются на Flask и ограничиваются.
 
 ```
-????????
+for i in {1..12}; do
+    echo -n "$(date '+%H:%M:%S') - Запрос $i: "
+    curl -s -w "Status: %{http_code}\n" http://localhost/api/events
+    sleep 1.5
+done
 ```
+Чтобы ограничение более точно могло показать нам результат, поставим паузу в 1.5 секунды и получим: 
+
+<img width="1341" height="292" alt="теест 2" src="https://github.com/user-attachments/assets/e0994c2f-c403-4877-b357-98ce8e4d66e3" />
+
+
+
+<img width="1340" height="292" alt="тест 2 2" src="https://github.com/user-attachments/assets/a1537940-dc14-4bcc-a0a9-70d12c2f7b38" />
+
+
+Мы видим, что после 10 запроса появляется HTTP Status: 503, что означает - наше огрнаничение работает
+
 
 Тест 3. Работают ли запросы, превышающие лимит
 
